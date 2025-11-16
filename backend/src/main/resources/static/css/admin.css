@@ -1,0 +1,240 @@
+/* /css/admin.css */
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+h2 {
+    color: white;
+    text-align: center;
+    margin: 40px 0 20px 0;
+    font-weight: 400;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили для таблицы */
+#materialsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+#materialsTable thead {
+    background: linear-gradient(to right, #1a73e8, #0b53c0);
+}
+
+#materialsTable th {
+    color: white;
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none !important;
+}
+
+#materialsTable td {
+    padding: 14px 12px;
+    text-align: center;
+    border-bottom: 1px solid #e1e8ed;
+    border-right: 1px solid #e1e8ed;
+}
+
+#materialsTable tbody tr {
+    transition: all 0.3s ease;
+}
+
+#materialsTable tbody tr:hover {
+    background-color: rgba(26, 115, 232, 0.05);
+    transform: translateY(-1px);
+}
+
+#materialsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#materialsTable td:last-child {
+    border-right: none;
+}
+
+/* Стили для формы */
+#addMaterialForm {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    align-items: end;
+}
+
+#addMaterialForm input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    box-sizing: border-box;
+}
+
+#addMaterialForm input:focus {
+    outline: none;
+    border-color: #1a73e8;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+#addMaterialForm input::placeholder {
+    color: #a0a0a0;
+}
+
+#addMaterialForm button {
+    grid-column: 1 / -1;
+    background: linear-gradient(to right, #1a73e8, #0b53c0);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    margin-top: 10px;
+}
+
+#addMaterialForm button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+    background: linear-gradient(to right, #0b53c0, #1a73e8);
+}
+
+#addMaterialForm button:active {
+    transform: translateY(0);
+}
+
+/* Стили для кнопок действий в таблице */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.action-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: linear-gradient(to right, #28a745, #20c997);
+    color: white;
+}
+
+.btn-delete {
+    background: linear-gradient(to right, #dc3545, #c82333);
+    color: white;
+}
+
+.action-buttons button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Разделитель */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+    margin: 40px 0;
+}
+
+/* Анимация появления */
+body {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    #materialsTable {
+        font-size: 0.9rem;
+    }
+
+    #materialsTable th,
+    #materialsTable td {
+        padding: 10px 8px;
+    }
+
+    #addMaterialForm {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-buttons button {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #materialsTable {
+        font-size: 0.8rem;
+    }
+
+    #materialsTable th,
+    #materialsTable td {
+        padding: 8px 6px;
+    }
+}

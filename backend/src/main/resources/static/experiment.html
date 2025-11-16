@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Эксперимент</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/experiment.js" defer></script>
+    <link rel="stylesheet" href="/css/exp.css">
+</head>
+<body>
+
+<h1>Расчёт плотности</h1>
+
+<div class="form-container">
+    <div class="form-group">
+        <label>Материал:</label>
+        <select id="materials"></select>
+    </div>
+
+    <div class="form-group">
+        <h3>Диапазон давления газа (Pg)</h3>
+        <div class="range-group">
+            <div class="range-item">
+                <label>Мин:</label>
+                <input type="number" id="pgmin" step="any">
+            </div>
+            <div class="range-item">
+                <label>Макс:</label>
+                <input type="number" id="pgmax" step="any">
+            </div>
+            <div class="range-item">
+                <label>Шаг:</label>
+                <input type="number" id="pgstep" step="any">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h3>Диапазон температуры спекания (T)</h3>
+        <div class="range-group">
+            <div class="range-item">
+                <label>Мин:</label>
+                <input type="number" id="tmin" step="any">
+            </div>
+            <div class="range-item">
+                <label>Макс:</label>
+                <input type="number" id="tmax" step="any">
+            </div>
+            <div class="range-item">
+                <label>Шаг:</label>
+                <input type="number" id="tstep" step="any">
+            </div>
+        </div>
+    </div>
+
+    <button id="calcBtn">Рассчитать и построить графики</button>
+</div>
+
+<h2>Графики</h2>
+<div class="chart-container">
+    <canvas id="chart1" width="600" height="400"></canvas>
+</div>
+<div class="chart-container">
+    <canvas id="chart2" width="600" height="400"></canvas>
+</div>
+
+</body>
+</html>

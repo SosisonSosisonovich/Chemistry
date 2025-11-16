@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-панель</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<h1>Управление рассчетами</h1>
+
+<h2>Все материалы</h2>
+<table border="10" id="materialsTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>a0</th><th>a1</th><th>a2</th><th>a3</th><th>a4</th><th>a5</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<hr>
+
+<h2>Добавить материал</h2>
+<form id="addMaterialForm">
+    <input type="text" id="name" placeholder="Название" required>
+
+    <input type="number" step="any" id="a0" placeholder="a0" required>
+    <input type="number" step="any" id="a1" placeholder="a1" required>
+    <input type="number" step="any" id="a2" placeholder="a2" required>
+    <input type="number" step="any" id="a3" placeholder="a3" required>
+    <input type="number" step="any" id="a4" placeholder="a4" required>
+    <input type="number" step="any" id="a5" placeholder="a5" required>
+
+    <button type="submit">Добавить</button>
+</form>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>
