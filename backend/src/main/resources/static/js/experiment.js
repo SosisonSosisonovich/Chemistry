@@ -13,6 +13,7 @@ async function loadMaterials() {
     try {
         const res = await fetch(API_MAT);
         const materials = await res.json();
+        materialsList = materials;
         const sel = document.getElementById("materials");
 
         materials.forEach(m => {
@@ -68,7 +69,7 @@ function createTable(labels, datasets, title) {
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
     const firstHeader = document.createElement("th");
-    firstHeader.textContent = "X";
+    firstHeader.textContent = "ρ, г/см³";
     headerRow.appendChild(firstHeader);
     datasets.forEach(ds => {
         const th = document.createElement("th");
@@ -87,7 +88,7 @@ function createTable(labels, datasets, title) {
 
         datasets.forEach(ds => {
             const td = document.createElement("td");
-            td.textContent = ds.data[i].toFixed(4);
+            td.textContent = ds.data[i].toFixed(2);
             tr.appendChild(td);
         });
 
@@ -104,7 +105,7 @@ function exportTableToCSV(table, filename) {
     const rows = Array.from(table.querySelectorAll("tr"));
     const csvContent = rows.map(tr => {
         const cols = Array.from(tr.querySelectorAll("th, td"));
-        return cols.map(td => td.textContent).join(",");
+        return cols.map(td => td.textContent).join(";");
     }).join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -118,6 +119,7 @@ function exportTableToCSV(table, filename) {
 }
 
 async function calculateAndPlot() {
+    const timeStart = performance.now();
     let materialId, Pgmin, Pgmax, Pgstep, Tmin, Tmax, Tstep;
     try {
         materialId = parseInt(document.getElementById("materials").value);
@@ -127,6 +129,13 @@ async function calculateAndPlot() {
         Tmin = getInputValue("tmin", "Минимальная температура");
         Tmax = getInputValue("tmax", "Максимальная температура");
         Tstep = getInputValue("tstep", "Шаг температуры");
+
+        if (Pgmin < 0) throw new Error("Минимальное давление не может быть отрицательным");
+            if (Pgmax < 0) throw new Error("Максимальное давление не может быть отрицательным");
+            if (Pgstep <= 0) throw new Error("Шаг давления должен быть > 0");
+            if (Tstep <= 0) throw new Error("Шаг температуры должен быть > 0");
+            if (Pgmax <= Pgmin) throw new Error("Максимальное давление должно быть больше минимального");
+            if (Tmax <= Tmin) throw new Error("Максимальная температура должна быть больше минимальной");
     } catch (err) {
         alert(err.message);
         return;
@@ -143,7 +152,7 @@ async function calculateAndPlot() {
             calculateDensity(materialId, Pg, T)
         ));
         datasets1.push({
-            label: `T = ${T}`,
+            label: `T,°C = ${T}`,
             data: densities,
             borderColor: tempColors[i],
             fill: false
@@ -157,10 +166,19 @@ async function calculateAndPlot() {
         data: { labels: pressures, datasets: datasets1 },
         options: {
             responsive: true,
-            plugins: { title: { display: true, text: 'Плотность vs Давление' } },
+            plugins: {
+                title: { display: true, text: 'Плотность vs Температура' },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return `ρ = ${ctx.parsed.y.toFixed(4)} г/см³`;
+                        }
+                    }
+                }
+            },
             scales: {
                 x: { title: { display: true, text: 'Давление газа в печи, атм' } },
-                y: { title: { display: true, text: 'Плотность ρ' } }
+                y: { title: { display: true, text: 'Плотность ρ, г/см³' } }
             }
         }
     });
@@ -176,7 +194,7 @@ async function calculateAndPlot() {
             calculateDensity(materialId, Pg, T)
         ));
         datasets2.push({
-            label: `Pg = ${Pg}`,
+            label: `Pg, атм = ${Pg}`,
             data: densities,
             borderColor: pressureColors[i],
             fill: false
@@ -190,10 +208,19 @@ async function calculateAndPlot() {
         data: { labels: temps, datasets: datasets2 },
         options: {
             responsive: true,
-            plugins: { title: { display: true, text: 'Плотность vs Температура' } },
+            plugins: {
+                title: { display: true, text: 'Плотность vs Давление' },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return `ρ = ${ctx.parsed.y.toFixed(4)} г/см³`;
+                        }
+                    }
+                }
+            },
             scales: {
                 x: { title: { display: true, text: 'Температура спекания, °C' } },
-                y: { title: { display: true, text: 'Плотность ρ' } }
+                y: { title: { display: true, text: 'Плотность ρ, г/см³' } }
             }
         }
     });
@@ -206,6 +233,11 @@ async function calculateAndPlot() {
         document.body.appendChild(tablesContainer);
     }
     tablesContainer.innerHTML = "";
+    const materialName = materialsList.find(m => m.material_id === materialId)?.material_name || "Неизвестно";
+
+    const materialHeader = document.createElement("h2");
+    materialHeader.textContent = `Материал: ${materialName}`;
+    tablesContainer.appendChild(materialHeader);
 
     const table1 = createTable(pressures, datasets1, "Таблица: Плотность vs Давление");
     const table2 = createTable(temps, datasets2, "Таблица: Плотность vs Температура");
@@ -231,4 +263,19 @@ async function calculateAndPlot() {
     tablesContainer.appendChild(exportBtn1);
     tablesContainer.appendChild(exportBtn2);
 
+    const timeEnd = performance.now();
+        const calcTime = ((timeEnd - timeStart) / 1000).toFixed(3);
+
+    let memoryUsed = null;
+        if (performance.memory) {
+            memoryUsed = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2); // МБ
+        }
+    const stats = document.createElement("p");
+        stats.style.marginTop = "20px";
+        stats.innerHTML = `
+            <b>Время расчёта:</b> ${calcTime} с<br>
+            ${memoryUsed ? `<b>Использование памяти:</b> ${memoryUsed} МБ` : ""}
+        `;
+
+    tablesContainer.appendChild(stats);
 }

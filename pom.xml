@@ -14,7 +14,7 @@
 	<name>backend</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>9</java.version>
 	</properties>
 
 	<dependencies>
@@ -124,6 +124,9 @@
                     <target>9</target>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
 	</build>
 
