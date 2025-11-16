@@ -53,18 +53,4 @@ public class AuthService {
         }
     }
 
-    public boolean isAuthenticated(HttpSession session) {
-        return session.getAttribute("user") != null;
-    }
-
-    public boolean hasRole(HttpSession session, String roleName) {
-        Users user = (Users) session.getAttribute("user");
-        if (user == null) return false;
-
-        return user.getRole().getRole_name().equalsIgnoreCase(roleName);
-    }
-
-    public Users getCurrentUser(HttpSession session) {
-        return (Users) session.getAttribute("user");
-    }
 }

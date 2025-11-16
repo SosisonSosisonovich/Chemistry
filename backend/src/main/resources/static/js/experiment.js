@@ -55,7 +55,7 @@ function range(start, end, step) {
     return result;
 }
 
-function createTable(labels, datasets, title) {
+function createTable(labels, datasets, title, firstColumnName) {
     const container = document.createElement("div");
     container.classList.add("table-container");
 
@@ -69,7 +69,7 @@ function createTable(labels, datasets, title) {
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
     const firstHeader = document.createElement("th");
-    firstHeader.textContent = "ρ, г/см³";
+    firstHeader.textContent = firstColumnName;
     headerRow.appendChild(firstHeader);
     datasets.forEach(ds => {
         const th = document.createElement("th");
@@ -88,7 +88,7 @@ function createTable(labels, datasets, title) {
 
         datasets.forEach(ds => {
             const td = document.createElement("td");
-            td.textContent = ds.data[i].toFixed(2);
+            td.textContent = ds.data[i].toFixed(3);
             tr.appendChild(td);
         });
 
@@ -101,22 +101,25 @@ function createTable(labels, datasets, title) {
     return container;
 }
 
-function exportTableToCSV(table, filename) {
+function exportTableToCSV(table, filename, materialName) {
     const rows = Array.from(table.querySelectorAll("tr"));
-    const csvContent = rows.map(tr => {
+
+    let csvContent = `Материал;${materialName}\n`;
+
+    csvContent += rows.map(tr => {
         const cols = Array.from(tr.querySelectorAll("th, td"));
         return cols.map(td => td.textContent).join(";");
     }).join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.setAttribute("download", filename);
-    link.style.display = "none";
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    link.remove();
 }
+
 
 async function calculateAndPlot() {
     const timeStart = performance.now();
@@ -171,7 +174,7 @@ async function calculateAndPlot() {
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
-                            return `ρ = ${ctx.parsed.y.toFixed(4)} г/см³`;
+                            return `ρ = ${ctx.parsed.y.toFixed(3)} г/см³`;
                         }
                     }
                 }
@@ -213,7 +216,7 @@ async function calculateAndPlot() {
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
-                            return `ρ = ${ctx.parsed.y.toFixed(4)} г/см³`;
+                            return `ρ = ${ctx.parsed.y.toFixed(3)} г/см³`;
                         }
                     }
                 }
@@ -235,12 +238,8 @@ async function calculateAndPlot() {
     tablesContainer.innerHTML = "";
     const materialName = materialsList.find(m => m.material_id === materialId)?.material_name || "Неизвестно";
 
-    const materialHeader = document.createElement("h2");
-    materialHeader.textContent = `Материал: ${materialName}`;
-    tablesContainer.appendChild(materialHeader);
-
-    const table1 = createTable(pressures, datasets1, "Таблица: Плотность vs Давление");
-    const table2 = createTable(temps, datasets2, "Таблица: Плотность vs Температура");
+    const table1 = createTable(pressures, datasets1, "Таблица: Плотность vs Давление", "Pg, атм");
+    const table2 = createTable(temps, datasets2, "Таблица: Плотность vs Температура","T,°C");
 
     tablesContainer.appendChild(table1);
     tablesContainer.appendChild(table2);
@@ -250,14 +249,14 @@ async function calculateAndPlot() {
     exportBtn1.textContent = "Экспорт Плотность vs Давление в CSV";
     exportBtn1.addEventListener("click", () => {
         const table = table1.querySelector("table");
-        exportTableToCSV(table, "density_vs_pressure.csv");
+        exportTableToCSV(table, "density_vs_pressure.csv",materialName);
     });
 
     const exportBtn2 = document.createElement("button");
     exportBtn2.textContent = "Экспорт Плотность vs Температура в CSV";
     exportBtn2.addEventListener("click", () => {
         const table = table2.querySelector("table");
-        exportTableToCSV(table, "density_vs_temperature.csv");
+        exportTableToCSV(table, "density_vs_temperature.csv",materialName);
     });
 
     tablesContainer.appendChild(exportBtn1);
@@ -268,7 +267,7 @@ async function calculateAndPlot() {
 
     let memoryUsed = null;
         if (performance.memory) {
-            memoryUsed = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2); // МБ
+            memoryUsed = (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(3); // МБ
         }
     const stats = document.createElement("p");
         stats.style.marginTop = "20px";

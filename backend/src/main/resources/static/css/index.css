@@ -54,7 +54,9 @@ nav a::before {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(26, 115, 232, 0.1), transparent);
     transition: left 0.5s;
+    pointer-events: none;
 }
+
 
 nav a:hover::before {
     left: 100%;
